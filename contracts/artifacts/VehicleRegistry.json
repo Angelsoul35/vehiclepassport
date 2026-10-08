@@ -1,0 +1,311 @@
+{
+  "contractName": "VehicleRegistry",
+  "solcVersion": "0.8.24+commit.e11b9ed9.Emscripten.clang",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "NotOperator",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotRecorder",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroVehicle",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "vehicleId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum VehicleRegistry.EventType",
+          "name": "eventType",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "odometerKm",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "timestamp",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "dataHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "recorder",
+          "type": "address"
+        }
+      ],
+      "name": "EventRecorded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOperator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOperator",
+          "type": "address"
+        }
+      ],
+      "name": "OperatorTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recorder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "allowed",
+          "type": "bool"
+        }
+      ],
+      "name": "RecorderSet",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "vehicleId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eventCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "vehicleId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEvent",
+      "outputs": [
+        {
+          "internalType": "enum VehicleRegistry.EventType",
+          "name": "eventType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "odometerKm",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint64",
+          "name": "timestamp",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "dataHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "recorder",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isRecorder",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "vehicleId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "lastOdometer",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "operator",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "vehicleId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum VehicleRegistry.EventType",
+          "name": "eventType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "odometerKm",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint64",
+          "name": "timestamp",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "dataHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "recordEvent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "recorder",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowed",
+          "type": "bool"
+        }
+      ],
+      "name": "setRecorder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalEvents",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOperator",
+          "type": "address"
+        }
+      ],
+      "name": "transferOperator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561000f575f80fd5b505f80546001600160a01b03191633908117825580825260026020526040808320805460ff19166001179055519091907f74da04524d50c64947f5dd5381ef1a4dca5cba8ed1d816243f9e48aa0b5617ed908290a36040516001815233907ff36785c4cc49b452cea097975e887a69971f39688674af50cb3b1cb7e18c34829060200160405180910390a26107ac806100a75f395ff3fe608060405234801561000f575f80fd5b5060043610610090575f3560e01c8063646ce04911610063578063646ce0491461010c5780636b39349f1461013e578063ba87068614610151578063d671da211461015a578063ed098a5b14610179575f80fd5b806329605e7714610094578063379c158b146100a9578063563ffa0e146100cf578063570ca735146100e2575b5f80fd5b6100a76100a23660046105cd565b61019d565b005b6100bc6100b73660046105ed565b61023d565b6040519081526020015b60405180910390f35b6100bc6100dd366004610604565b610292565b5f546100f4906001600160a01b031681565b6040516001600160a01b0390911681526020016100c6565b61012e61011a3660046105cd565b60026020525f908152604090205460ff1681565b60405190151581526020016100c6565b6100a761014c366004610661565b610446565b6100bc60015481565b6100bc6101683660046105ed565b5f9081526003602052604090205490565b61018c61018736600461069a565b6104ce565b6040516100c69594939291906106ce565b5f546001600160a01b031633146101c757604051631f0853c160e21b815260040160405180910390fd5b6001600160a01b0381166101ee57604051639afa1c7960e01b815260040160405180910390fd5b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f74da04524d50c64947f5dd5381ef1a4dca5cba8ed1d816243f9e48aa0b5617ed9190a35050565b5f8181526003602052604081208054820361025a57505f92915050565b8054819061026a90600190610736565b8154811061027a5761027a61074f565b905f5260205f20906005020160010154915050919050565b335f9081526002602052604081205460ff166102c15760405163787a22eb60e01b815260040160405180910390fd5b856102df57604051639afa1c7960e01b815260040160405180910390fd5b505f85815260036020526040908190208054825160a0810190935291819080886005811115610310576103106106ba565b8152602080820189905267ffffffffffffffff8816604083015260608201879052336080909201919091528254600181810185555f94855291909320825160059485029091018054939490939192849260ff1916918490811115610376576103766106ba565b02179055506020820151600182810191909155604083015160028301805467ffffffffffffffff191667ffffffffffffffff90921691909117905560608301516003830155608090920151600490910180546001600160a01b0319166001600160a01b03909216919091179055805481905f906103f4908390610763565b9250508190555081877fd630fdaf72725813032d9670ff7b46e9c0d361b8fd874496db99cec48b84a48588888888336040516104349594939291906106ce565b60405180910390a35095945050505050565b5f546001600160a01b0316331461047057604051631f0853c160e21b815260040160405180910390fd5b6001600160a01b0382165f81815260026020908152604091829020805460ff191685151590811790915591519182527ff36785c4cc49b452cea097975e887a69971f39688674af50cb3b1cb7e18c3482910160405180910390a25050565b5f805f805f8060035f8981526020019081526020015f2087815481106104f6576104f661074f565b905f5260205f2090600502016040518060a00160405290815f82015f9054906101000a900460ff16600581111561052f5761052f6106ba565b6005811115610540576105406106ba565b81526001820154602080830191909152600283015467ffffffffffffffff1660408084019190915260038401546060808501919091526004909401546001600160a01b031660809384015284519185015190850151938501519490920151909c919b5091995091975095509350505050565b80356001600160a01b03811681146105c8575f80fd5b919050565b5f602082840312156105dd575f80fd5b6105e6826105b2565b9392505050565b5f602082840312156105fd575f80fd5b5035919050565b5f805f805f60a08688031215610618575f80fd5b8535945060208601356006811061062d575f80fd5b935060408601359250606086013567ffffffffffffffff81168114610650575f80fd5b949793965091946080013592915050565b5f8060408385031215610672575f80fd5b61067b836105b2565b91506020830135801515811461068f575f80fd5b809150509250929050565b5f80604083850312156106ab575f80fd5b50508035926020909101359150565b634e487b7160e01b5f52602160045260245ffd5b60a08101600687106106ee57634e487b7160e01b5f52602160045260245ffd5b958152602081019490945267ffffffffffffffff92909216604084015260608301526001600160a01b031660809091015290565b634e487b7160e01b5f52601160045260245ffd5b8181038181111561074957610749610722565b92915050565b634e487b7160e01b5f52603260045260245ffd5b808201808211156107495761074961072256fea2646970667358221220e60d2d24d47d6f590c70725f8153f21dfe0e7251d5a0103fb5dcbc7c4f5a6b4964736f6c63430008180033"
+}

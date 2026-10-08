@@ -1,0 +1,9 @@
+{
+  "name": "vehiclepassport-contracts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VehicleRegistry Solidity contract and compiler for VehiclePassport.",
+  "license": "MIT",
+  "scripts": { "compile": "node compile.js" },
+  "dependencies": { "solc": "0.8.24" }
+}

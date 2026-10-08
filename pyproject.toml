@@ -1,0 +1,44 @@
+[project]
+name = "vehiclepassport"
+version = "1.0.0"
+description = "On-chain vehicle lifecycle passport: an append-only, tamper-evident log of service, inspection, and odometer events, with a machine-learning detector that flags odometer rollbacks and inconsistent histories."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Angelo David Padilla Romero" }]
+
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.34",
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  "numpy>=2.1",
+  "scikit-learn>=1.5",
+  "web3>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "pytest-cov>=6.0", "ruff>=0.8", "httpx>=0.28", "eth-tester>=0.12", "py-evm>=0.10"]
+
+[project.scripts]
+vehiclepassport = "vehiclepassport.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["vehiclepassport*"]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = ["chain: tests that deploy the contract to an in-memory EVM"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = ["B008"]
