@@ -25,10 +25,13 @@ class VehiclePassportService:
     ) -> None:
         self.settings = settings or get_settings()
         self.registry = registry if registry is not None else self._build_registry()
-        self.detector = detector or TamperDetector(
-            max_km_per_day=self.settings.max_km_per_day,
-            risk_threshold=self.settings.risk_threshold,
-        ).fit()
+        self.detector = (
+            detector
+            or TamperDetector(
+                max_km_per_day=self.settings.max_km_per_day,
+                risk_threshold=self.settings.risk_threshold,
+            ).fit()
+        )
 
     def _build_registry(self) -> RegistryClient:
         if (

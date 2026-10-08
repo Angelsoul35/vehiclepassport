@@ -39,13 +39,20 @@ dar por bueno un rollback visible. Eso es defendible ante un usuario.
 
 **¿Por qué un RandomForest?**
 Maneja características de distintas escalas sin normalizar, captura interacciones
-no lineales, da importancias de características para explicar, y es robusto y
-rápido. En validación logra exactitud ≈0,99 y ROC-AUC ≈1,0.
+no lineales, expone importancias de características, y es robusto y rápido. En la
+evaluación con semilla independiente logra F1 ≈0,979 y exactitud ≈0,983, con CV a
+5 pliegues 0,962 ± 0,011 y una brecha train-test de 0,018 (cifras reales que
+imprime `evaluation.py`; no afirmo un ROC-AUC que no calculo).
 
 **¿Cómo das explicabilidad?**
-Con dos cosas: las `red_flags` en texto (la explicación local: qué pasó y cuándo)
-y las `feature_importances_` del modelo (la explicación global: qué pesa más). El
-informe trae ambas, así que ningún veredicto es una caja negra.
+Con dos cosas. Las `red_flags` en texto son la explicación **local y determinista**
+(qué pasó y cuándo: "el odómetro bajó de 61.000 a 35.000 km"). Y cuando marca el
+modelo sin una regla dura, `model_factors` da una explicación **específica de ese
+vehículo**: no el ranking global de importancias (idéntico para todos), sino las
+características de *este* historial que más se desvían de un coche honesto, como
+z-scores con signo ponderados por importancia. El modelo también expone
+`feature_importances_` si se quiere la vista global. El informe trae ambas cosas,
+así que ningún veredicto es una caja negra.
 
 **¿Por qué la línea de tiempo del kilometraje ignora los cambios de propietario?**
 Porque su kilometraje puede ser un valor declarado, no una medición, y la venta

@@ -81,6 +81,6 @@ def test_detector_generalises_without_overfitting():
     from vehiclepassport.evaluation import evaluate
 
     report = evaluate()
-    assert report.cv_f1_mean >= 0.9          # not underfit
-    assert report.test_f1 >= 0.9             # generalises to unseen histories
-    assert report.train_test_gap <= 0.1      # not overfit
+    assert report.cv_f1_mean >= 0.9  # not underfit
+    assert report.test_f1 >= 0.9  # generalises to unseen histories
+    assert report.train_test_gap <= 0.1  # not overfit

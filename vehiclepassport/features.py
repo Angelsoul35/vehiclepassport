@@ -30,9 +30,7 @@ FEATURE_NAMES = [
 
 def _odometer_timeline(history: list[EventRecord]) -> list[tuple[int, int]]:
     """(timestamp, odometer) for events that carry a real mileage reading, sorted."""
-    points = [
-        (e.timestamp, e.odometer_km) for e in history if e.event_type in ODOMETER_EVENTS
-    ]
+    points = [(e.timestamp, e.odometer_km) for e in history if e.event_type in ODOMETER_EVENTS]
     return sorted(points)
 
 

@@ -63,6 +63,12 @@ is important: the probabilistic model should never be able to "vote away" a
 rollback that plainly happened. The model adds sensitivity to subtler cases; the
 rules guarantee the obvious ones are never missed.
 
+When the model flags a vehicle with no hard red flag, the report explains *that
+vehicle*: `model_factors` is a per-instance explanation — the features where this
+history deviates most from an honest car, as a signed z-score weighted by the
+model's importances — rather than a global feature ranking that would read the
+same for every vehicle. So even a model-only verdict is inspectable.
+
 ## The registry boundary
 
 `RegistryClient` is a `Protocol` with two implementations:

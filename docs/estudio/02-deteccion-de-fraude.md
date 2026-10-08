@@ -37,15 +37,17 @@ Usamos las dos cosas, y cuando una regla dura se dispara, **gana**:
 - Da `feature_importances_`: qué características pesan más, una explicación global.
 - Es robusto y rápido de entrenar.
 
-### ¿0,99 no es sospechoso? (over/underfitting)
+### Un F1 ~0,96 — ¿legítimo o sospechoso? (over/underfitting)
 
-Un número casi perfecto suele delatar sobreajuste o un test que filtra el
-entrenamiento. Aquí es **legítimo**, y lo demostramos (`evaluation.py`):
+Un número muy alto suele delatar sobreajuste o un test que filtra el
+entrenamiento. Aquí es **legítimo**, y lo demostramos (`evaluation.py`, cifras
+reales que imprime, no redondeadas al alza):
 
 ```
-5-fold CV F1        : 0.99 +/- 0.01    # estable, no un split con suerte
-independent test F1 : 0.99             # histories de otra semilla
-train-test gap      : 0.01             # minúscula -> no sobreajusta
+5-fold CV F1        : 0.962 +/- 0.011   # estable, no un split con suerte
+independent test F1 : 0.979             # histories de otra semilla
+independent test acc: 0.983
+train-test gap      : 0.018             # minúscula -> no sobreajusta
 ```
 
 Dos cosas lo hacen honesto, a diferencia de un clasificador de texto que memoriza
@@ -53,10 +55,11 @@ plantillas: cada historial de vehículo es un **sorteo aleatorio independiente**
 (no una plantilla reutilizada), así que el test no filtra el entrenamiento; y las
 características están **diseñadas para capturar el fraude directamente** (un
 rollback **es** un delta negativo del odómetro), así que la relación aprendida es
-real, no espuria. La validación cruzada (baja varianza) y el test de semilla
-independiente confirman la generalización: ni underfitting (está cerca del techo
-que permiten las características) ni overfitting (brecha ≈0,01). Y las reglas duras
-garantizan los casos obvios pase lo que pase con el modelo.
+real, no espuria. La validación cruzada (baja varianza, 0,011) y el test de
+semilla independiente confirman la generalización: ni underfitting (el F1 está
+alto en ambos lados) ni overfitting (brecha ≈0,018, train F1 ≈0,997 frente a test
+0,979). Y las reglas duras garantizan los casos obvios pase lo que pase con el
+modelo.
 
 ## Las reglas duras (hard flags)
 
@@ -79,7 +82,15 @@ contexto pero no fuerza la sospecha por sí sola.
 - `is_suspicious`: la decisión final (regla dura **o** riesgo ≥ umbral).
 - `red_flags`: los hallazgos en texto claro.
 - `features`: las características calculadas.
-- `model_factors`: las 3 características que el modelo más pondera.
+- `model_factors`: la explicación **por vehículo** del modelo — no el ranking
+  global de importancias (que sería idéntico para todos), sino las características
+  de *este* historial que más se desvían de un coche honesto. Se calcula como un
+  z-score con signo `(valor − media_honesta) / desviación_honesta`, recortado a
+  ±20 (una característica que vale 0 en todos los coches honestos tiene varianza
+  casi nula, y sin recorte daría un z astronómico sin sentido), y ponderado por la
+  importancia que el modelo da a esa característica. Positivo significa "más que un
+  coche honesto típico". Así, incluso cuando marca el modelo sin una regla dura, el
+  informe nombra *por qué este vehículo concreto* parece anómalo.
 
 Así, cada veredicto se puede justificar: no es una caja negra.
 

@@ -61,9 +61,26 @@ la explicación local de un vehículo concreto:
 
 Estas banderas no dependen del modelo: se leen directamente de los datos.
 
+## Cuando marca el modelo pero no hay bandera dura
+
+A veces el riesgo es alto sin que ninguna regla dura se dispare: un patrón sutil
+(mantenimiento irregular, varianza de km rara) que el bosque capta pero que no es
+un hecho evidente. Ahí hace falta explicar *por qué este vehículo*, y el informe
+lo hace con `model_factors`. En vez del ranking global de importancias (que sería
+idéntico para todos los vehículos y no explicaría *este* caso), calcula, para cada
+característica, un **z-score con signo** respecto a la distribución de los coches
+honestos: `(valor − media_honesta) / desviación_honesta`. Lo recorta a ±20 —una
+característica que vale 0 en todos los honestos (p. ej. el número de rollbacks)
+tiene varianza casi nula y daría un z disparatado— y lo pondera por la importancia
+que el modelo da a esa característica. Devuelve las 3 de mayor peso. Positivo = "más
+que un coche honesto típico". Así el veredicto del modelo también se justifica, y
+de forma específica.
+
 ## Para fijar la idea
 
 - Las características convierten el historial en números que el modelo entiende.
 - La línea de tiempo del kilometraje usa **solo lecturas fiables**, para no
   dejarse engañar por valores puestos en una venta.
-- Las banderas rojas son la explicación en texto, independiente del modelo.
+- Las banderas rojas son la explicación en texto, independiente del modelo; y
+  `model_factors` explica el veredicto del modelo **por vehículo** (z-scores con
+  signo), no con un ranking global.

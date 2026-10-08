@@ -27,9 +27,7 @@ def _event(event_type: EventType, odo: int, ts: int) -> EventRecord:
     )
 
 
-def make_history(
-    rng: np.random.Generator, tampered: bool
-) -> tuple[list[EventRecord], int, str]:
+def make_history(rng: np.random.Generator, tampered: bool) -> tuple[list[EventRecord], int, str]:
     """Return (events, label, kind). label is 1 for tampered, else 0."""
     age_days = int(rng.uniform(3 * 365, 12 * 365))
     start_ts = NOW - age_days * DAY

@@ -33,7 +33,10 @@ analyses it:
   what fraud looks like, so the contract stores it faithfully and lets the
   detector flag it.
 - **Explainable verdicts.** Every risk score comes with plain-language red flags
-  ("odometer rollback: 61,000 km dropped to 35,000 km").
+  ("odometer rollback: 61,000 km dropped to 35,000 km"). When the model flags a
+  vehicle that has *no* hard red flag, the report still names the features of that
+  specific vehicle that look unlike an honest car (`model_factors`, a signed
+  z-score per feature), not a generic global ranking.
 - **Private.** No VIN or owner data reaches the chain — only a hashed id, event
   codes, odometer values, and record digests.
 
@@ -139,9 +142,10 @@ rather than asserting it:
 
 ```
 $ python -m vehiclepassport.evaluation
-  5-fold CV F1        : 0.99 +/- 0.01    # stable, not a lucky split
-  independent test F1 : 0.99             # test histories from a different seed
-  train-test gap      : 0.01             # tiny -> not overfit
+  5-fold CV F1        : 0.962 +/- 0.011   # stable, not a lucky split
+  independent test F1 : 0.979             # test histories from a different seed
+  independent test acc: 0.983
+  train-test gap      : 0.018             # tiny -> not overfit
 ```
 
 Two things make the high score honest, unlike a text classifier memorising
@@ -149,10 +153,11 @@ templates: each vehicle history is an **independent random draw** (not a reused
 template), so the test set does not leak training phrasings; and the features are
 **engineered to capture the fraud directly** (a rollback *is* a negative odometer
 delta), so the relationship the model learns is real, not spurious. The 5-fold
-cross-validation shows low variance and the independent-seed test set confirms
-generalisation, so the model is neither underfit (it scores near the ceiling the
-features allow) nor overfit (the train/test gap is ~0.01). The deterministic
-hard-flag rules then guarantee the obvious cases regardless of the model.
+cross-validation shows low variance (0.011) and the independent-seed test set
+confirms generalisation, so the model is neither underfit (it scores high on both
+sides) nor overfit (the train F1 of 0.997 is only 0.018 above the test F1). The
+deterministic hard-flag rules then guarantee the obvious cases regardless of the
+model.
 
 ## Testing
 
