@@ -73,3 +73,14 @@ def test_held_out_accuracy_is_high():
     x_te = np.array([feature_vector(histories[i]) for i in te])
     pred = (det._model.predict_proba(x_te)[:, 1] >= 0.5).astype(int)
     assert accuracy_score([labels[i] for i in te], pred) > 0.9
+
+
+def test_detector_generalises_without_overfitting():
+    # Independent test set (different seed) + CV: a high score here is legitimate
+    # generalisation, and the tiny train-test gap rules out overfitting.
+    from vehiclepassport.evaluation import evaluate
+
+    report = evaluate()
+    assert report.cv_f1_mean >= 0.9          # not underfit
+    assert report.test_f1 >= 0.9             # generalises to unseen histories
+    assert report.train_test_gap <= 0.1      # not overfit

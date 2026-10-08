@@ -37,8 +37,26 @@ Usamos las dos cosas, y cuando una regla dura se dispara, **gana**:
 - Da `feature_importances_`: qué características pesan más, una explicación global.
 - Es robusto y rápido de entrenar.
 
-En datos de validación (que el modelo no vio), el detector logra una exactitud
-≈0,99, un F1 ≈0,99 y un ROC-AUC ≈1,0. Es fuerte.
+### ¿0,99 no es sospechoso? (over/underfitting)
+
+Un número casi perfecto suele delatar sobreajuste o un test que filtra el
+entrenamiento. Aquí es **legítimo**, y lo demostramos (`evaluation.py`):
+
+```
+5-fold CV F1        : 0.99 +/- 0.01    # estable, no un split con suerte
+independent test F1 : 0.99             # histories de otra semilla
+train-test gap      : 0.01             # minúscula -> no sobreajusta
+```
+
+Dos cosas lo hacen honesto, a diferencia de un clasificador de texto que memoriza
+plantillas: cada historial de vehículo es un **sorteo aleatorio independiente**
+(no una plantilla reutilizada), así que el test no filtra el entrenamiento; y las
+características están **diseñadas para capturar el fraude directamente** (un
+rollback **es** un delta negativo del odómetro), así que la relación aprendida es
+real, no espuria. La validación cruzada (baja varianza) y el test de semilla
+independiente confirman la generalización: ni underfitting (está cerca del techo
+que permiten las características) ni overfitting (brecha ≈0,01). Y las reglas duras
+garantizan los casos obvios pase lo que pase con el modelo.
 
 ## Las reglas duras (hard flags)
 
