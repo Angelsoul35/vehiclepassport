@@ -2,10 +2,11 @@
 
 ## Las piezas, de principio a fin
 
-```
- eventos de vida   →   registro on-chain   →   características + reglas   →   veredicto
- generate.py           chain/registry.py        features.py                   detector.py
- (sintético)           VehicleRegistry.sol      (vector + banderas)           (riesgo + regla dura)
+```mermaid
+flowchart LR
+    A[Eventos de vida<br/>generate.py · sintético] --> B[(Registro on-chain<br/>chain/registry.py<br/>VehicleRegistry.sol)]
+    B --> C[Características + reglas<br/>features.py<br/>vector + banderas]
+    C --> D[Veredicto<br/>detector.py<br/>riesgo + regla dura]
 ```
 
 Por encima: la **API HTTP** (`main.py`, FastAPI) y la **CLI** (`cli.py`, una demo
