@@ -10,6 +10,12 @@ The two halves work together. The chain gives a history that no one can quietly
 rewrite — so the data the model reasons over is trustworthy. The model turns that
 history into a clear verdict with reasons.
 
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](.github/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+---
+
 ## Why it matters
 
 Odometer fraud is common and expensive: a rolled-back odometer makes a car look
