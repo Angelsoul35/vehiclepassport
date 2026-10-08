@@ -33,7 +33,15 @@ def make_history(
     """Return (events, label, kind). label is 1 for tampered, else 0."""
     age_days = int(rng.uniform(3 * 365, 12 * 365))
     start_ts = NOW - age_days * DAY
-    daily_km = float(rng.uniform(22.0, 70.0))  # ~8k..26k km/year
+    # About a quarter of vehicles are high-mileage commercial use (a taxi, a
+    # delivery van). An honest one of these still has a monotonically rising
+    # odometer — just a much steeper slope. Including them in training stops the
+    # model from equating "high mileage" with fraud: high *monotonic* mileage is
+    # honest, a *rollback* or an impossible *jump* is not.
+    if rng.random() < 0.25:
+        daily_km = float(rng.uniform(70.0, 230.0))  # ~26k..84k km/year (commercial)
+    else:
+        daily_km = float(rng.uniform(22.0, 70.0))  # ~8k..26k km/year (private)
 
     n_events = int(rng.integers(9, 20))
     day_offsets = np.sort(rng.choice(np.arange(10, age_days), size=n_events, replace=False))

@@ -33,12 +33,11 @@ analyses it:
 
 ## How it works
 
-```
- lifecycle events          on-chain log          features + rules        verdict
- ────────────────    ───────────────────────   ──────────────────    ────────────
- service, inspection  VehicleRegistry.sol        mileage velocity,     risk score +
- ownership, odometer  (append-only, hashed  ─▶   rollbacks, service ─▶ red flags
- readings, incidents  VIN, record digests)       gaps, owners          (suspicious?)
+```mermaid
+flowchart LR
+    A[Lifecycle events<br/>service, inspection, ownership,<br/>odometer readings, incidents] --> B[(VehicleRegistry.sol<br/>append-only log<br/>hashed VIN, record digests)]
+    B --> C[Features + rules<br/>mileage velocity, rollbacks,<br/>service gaps, owners]
+    C --> D[Verdict<br/>risk score + red flags<br/>suspicious?]
 ```
 
 1. **Registry (`chain/` + `contracts/`).** The `VehicleRegistry` contract stores,

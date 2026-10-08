@@ -22,22 +22,11 @@ data flows through them, and the boundaries between them.
 
 ## Data flow for an assessment
 
-```
-┌──────────────────────┐  history()  ┌──────────────────────┐
-│ VehicleRegistry      │ ──────────▶ │ list[EventRecord]    │
-│ (on-chain events)    │             │ sorted by time       │
-└──────────────────────┘             └──────────┬───────────┘
-                                                │ extract_features / red_flags
-                                                ▼
-                                   ┌──────────────────────────┐
-                                   │ feature vector + flags    │
-                                   └──────────┬────────────────┘
-                                              │ RandomForest + hard-flag rule
-                                              ▼
-                                   ┌──────────────────────────┐
-                                   │ VehicleRiskReport         │
-                                   │ score, suspicious, flags  │
-                                   └──────────────────────────┘
+```mermaid
+flowchart TD
+    A[(VehicleRegistry<br/>on-chain events)] -->|history| B["list[EventRecord]<br/>sorted by time"]
+    B -->|extract_features / red_flags| C[Feature vector + flags]
+    C -->|RandomForest + hard-flag rule| D[VehicleRiskReport<br/>score, suspicious, flags]
 ```
 
 ## Why the chain stores the data faithfully, flaws and all

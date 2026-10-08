@@ -6,7 +6,9 @@ up soft, combined patterns (irregular servicing, odd mileage variance). On top o
 that sit deterministic red flags (a rollback, an implausible jump): if the history
 contains one, the vehicle is suspicious regardless of the model score, because a
 dropped odometer is not a matter of probability. The report carries both, so a
-decision is always explainable.
+decision is always explainable — and when the model flags a vehicle with *no*
+hard red flag, the report still names the features of that specific vehicle that
+look unlike an honest car (``model_factors``), rather than a generic ranking.
 """
 
 from __future__ import annotations
@@ -40,6 +42,8 @@ class TamperDetector:
         self._model = RandomForestClassifier(
             n_estimators=200, max_depth=8, random_state=0, class_weight="balanced"
         )
+        self._honest_mean: np.ndarray | None = None
+        self._honest_std: np.ndarray | None = None
         self._fitted = False
 
     def fit(
@@ -50,7 +54,13 @@ class TamperDetector:
         if histories is None:
             histories, labels = make_dataset()
         x = np.array([feature_vector(h) for h in histories])
-        self._model.fit(x, labels)
+        y = np.array(labels)
+        self._model.fit(x, y)
+        # Keep the honest-class feature distribution so a model-only flag can be
+        # explained per vehicle: which of *its* features look unlike an honest car.
+        honest = x[y == 0]
+        self._honest_mean = honest.mean(axis=0)
+        self._honest_std = honest.std(axis=0) + 1e-9
         self._fitted = True
         return self
 
@@ -62,11 +72,32 @@ class TamperDetector:
         )
         return [(name, round(float(w), 4)) for name, w in pairs]
 
+    def _instance_factors(self, vector: list[float], k: int = 3) -> list[tuple[str, float]]:
+        """Per-vehicle explanation of a model score: the features where *this*
+        vehicle deviates most from an honest car, as a signed z-score weighted by
+        the model's importance. Positive means "more than a typical honest car".
+        """
+        assert self._honest_mean is not None and self._honest_std is not None
+        # Clip the z-score: a feature that is identically zero in honest cars
+        # (e.g. rollback count) has ~zero variance, which would otherwise yield a
+        # meaningless astronomical z. Clipped, a value of +/-20 just reads as
+        # "far outside anything seen in an honest vehicle".
+        z = np.clip((np.array(vector) - self._honest_mean) / self._honest_std, -20.0, 20.0)
+        weighted = np.abs(z) * self._model.feature_importances_
+        order = np.argsort(weighted)[::-1]
+        out: list[tuple[str, float]] = []
+        for i in order[:k]:
+            if weighted[i] <= 0:
+                break
+            out.append((FEATURE_NAMES[i], round(float(z[i]), 2)))
+        return out
+
     def assess(self, history: list[EventRecord]) -> VehicleRiskReport:
         if not self._fitted:
             raise RuntimeError("Detector is not fitted. Call fit() first.")
         feats = extract_features(history)
-        x = np.array([feature_vector(history)])
+        vector = feature_vector(history)
+        x = np.array([vector])
         risk = float(self._model.predict_proba(x)[0][1])
 
         flags = red_flags(history, self.max_km_per_day)
@@ -78,5 +109,7 @@ class TamperDetector:
             is_suspicious=is_suspicious,
             red_flags=flags,
             features={k: round(v, 2) for k, v in feats.items()},
-            model_factors=self.feature_importances[:3],
+            # Per-vehicle reasons (not global importances), so even a model-only
+            # flag — one with no hard red flag — explains itself.
+            model_factors=self._instance_factors(vector),
         )

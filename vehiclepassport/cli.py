@@ -71,9 +71,10 @@ def demo() -> None:
     for flag in bad["red_flags"]:
         print(f"      - {flag}")
 
-    print("5) What the model weighs most (global):")
-    for name, weight in bad["model_factors"]:
-        print(f"      {name}: {weight}")
+    print("5) Why the model finds this vehicle unlike an honest car")
+    print("   (per-vehicle signals, in standard deviations from the honest average):")
+    for name, z in bad["model_factors"]:
+        print(f"      {name}: {z:+.1f} SD")
 
 
 def main() -> None:
