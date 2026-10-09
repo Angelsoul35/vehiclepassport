@@ -41,7 +41,7 @@ Es una decisión **conservadora**: un valor que un defraudador podría fijar
 libremente en una transferencia no se convierte en punto de referencia de lo
 "normal".
 
-### Una consecuencia honesta
+### Una consecuencia conservadora
 
 Para un coche nuevo comprado a 0 km, la transferencia de compra (odómetro 0)
 queda fuera de la línea de tiempo, así que la distancia medida empieza en el
@@ -69,11 +69,11 @@ un hecho evidente. Ahí hace falta explicar *por qué este vehículo*, y el info
 lo hace con `model_factors`. En vez del ranking global de importancias (que sería
 idéntico para todos los vehículos y no explicaría *este* caso), calcula, para cada
 característica, un **z-score con signo** respecto a la distribución de los coches
-honestos: `(valor − media_honesta) / desviación_honesta`. Lo recorta a ±20 —una
-característica que vale 0 en todos los honestos (p. ej. el número de rollbacks)
+legítimos: `(valor − media_legítima) / desviación_legítima`. Lo recorta a ±20 —una
+característica que vale 0 en todos los legítimos (p. ej. el número de rollbacks)
 tiene varianza casi nula y daría un z disparatado— y lo pondera por la importancia
 que el modelo da a esa característica. Devuelve las 3 de mayor peso. Positivo = "más
-que un coche honesto típico". Así el veredicto del modelo también se justifica, y
+que un coche legítimo típico". Así el veredicto del modelo también se justifica, y
 de forma específica.
 
 ## Para fijar la idea

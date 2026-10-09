@@ -13,7 +13,7 @@ from .generate import DAY, NOW
 from .service import VehiclePassportService
 
 # (event type, odometer km, days before NOW)
-HONEST = [
+LEGIT = [
     (EventType.OWNERSHIP_TRANSFER, 0, 2200),
     (EventType.SERVICE, 12_000, 1900),
     (EventType.INSPECTION, 28_000, 1550),
@@ -54,16 +54,16 @@ def demo() -> None:
     service = VehiclePassportService(settings=settings, registry=registry)
 
     print("2) Recording lifecycle events for two vehicles ...")
-    _record(service, "VIN-HONEST-0001", HONEST)
+    _record(service, "VIN-LEGIT-0001", LEGIT)
     _record(service, "VIN-ROLLBACK-002", TAMPERED)
-    honest_count = registry.event_count(vehicle_id("VIN-HONEST-0001"))
+    legit_count = registry.event_count(vehicle_id("VIN-LEGIT-0001"))
     bad_count = registry.event_count(vehicle_id("VIN-ROLLBACK-002"))
-    print(f"   recorded {honest_count} + {bad_count} events on-chain")
+    print(f"   recorded {legit_count} + {bad_count} events on-chain")
 
-    print("3) Assessing the honest vehicle:")
-    honest = service.assess("VIN-HONEST-0001")
-    print(f"   risk score {honest['risk_score']:.2f} -> suspicious: {honest['is_suspicious']}")
-    print(f"   red flags: {honest['red_flags'] or 'none'}")
+    print("3) Assessing the legitimate vehicle:")
+    legit = service.assess("VIN-LEGIT-0001")
+    print(f"   risk score {legit['risk_score']:.2f} -> suspicious: {legit['is_suspicious']}")
+    print(f"   red flags: {legit['red_flags'] or 'none'}")
 
     print("4) Assessing the vehicle with a rolled-back odometer:")
     bad = service.assess("VIN-ROLLBACK-002")
@@ -71,8 +71,8 @@ def demo() -> None:
     for flag in bad["red_flags"]:
         print(f"      - {flag}")
 
-    print("5) Why the model finds this vehicle unlike an honest car")
-    print("   (per-vehicle signals, in standard deviations from the honest average):")
+    print("5) Why the model finds this vehicle unlike a legitimate car")
+    print("   (per-vehicle signals, in standard deviations from the legitimate average):")
     for name, z in bad["model_factors"]:
         print(f"      {name}: {z:+.1f} SD")
 

@@ -25,9 +25,9 @@ dropped, but the model said 0.3, so we passed it").
 
 Use **both**, and let the rules win when they fire:
 
-- A **RandomForest**, trained on labelled honest and tampered histories, produces
-  a risk score from engineered features. It provides sensitivity to the subtle,
-  combined cases.
+- A **RandomForest**, trained on labelled legitimate and tampered histories,
+  produces a risk score from engineered features. It provides sensitivity to the
+  subtle, combined cases.
 - **Deterministic red flags** detect rollbacks and implausible jumps directly.
 - A **hard red flag marks the vehicle suspicious regardless of the model score.**
   The model can raise suspicion; it can never lower it below an obvious fact.

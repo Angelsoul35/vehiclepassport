@@ -1,9 +1,9 @@
-"""Honest evaluation of the tamper detector.
+"""Leakage-free evaluation of the tamper detector.
 
 Unlike a text classifier trained on a few templates, the detector learns from
 vehicle histories that are each an *independent* random draw, and its features
 (rollback size, maximum km/day, service gaps) are engineered to capture the
-fraud directly. So a high score is legitimate rather than memorisation — but we
+fraud directly. So a high score is legitimate rather than memorisation — and we
 prove it rather than assert it:
 
 * **5-fold cross-validation** (mean ± std) shows the score is stable, not a lucky

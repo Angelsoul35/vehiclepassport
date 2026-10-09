@@ -22,7 +22,7 @@ def _ev(etype, odo, day):
     )
 
 
-def _honest():
+def _legit():
     return [
         _ev(EventType.OWNERSHIP_TRANSFER, 0, 0),
         _ev(EventType.SERVICE, 15_000, 365),
@@ -32,18 +32,18 @@ def _honest():
 
 
 def test_feature_vector_length_and_order():
-    vec = feature_vector(_honest())
+    vec = feature_vector(_legit())
     assert len(vec) == len(FEATURE_NAMES)
 
 
-def test_honest_history_has_no_rollback():
-    feats = extract_features(_honest())
+def test_legit_history_has_no_rollback():
+    feats = extract_features(_legit())
     assert feats["n_rollbacks"] == 0
     assert feats["max_rollback_km"] == 0
     # The ownership transfer (odometer 0) is not a mileage reading, so the
     # timeline runs from the first service (15,000) to the last (48,000).
     assert feats["total_km"] == 33_000
-    assert red_flags(_honest(), max_km_per_day=1500) == []
+    assert red_flags(_legit(), max_km_per_day=1500) == []
 
 
 def test_rollback_is_detected():

@@ -40,16 +40,40 @@ dar por bueno un rollback visible. Eso es defendible ante un usuario.
 **¿Por qué un RandomForest?**
 Maneja características de distintas escalas sin normalizar, captura interacciones
 no lineales, expone importancias de características, y es robusto y rápido. En la
-evaluación con semilla independiente logra F1 ≈0,979 y exactitud ≈0,983, con CV a
-5 pliegues 0,962 ± 0,011 y una brecha train-test de 0,018 (cifras reales que
-imprime `evaluation.py`; no afirmo un ROC-AUC que no calculo).
+evaluación sintética con semilla independiente logra F1 ≈0,979 y exactitud ≈0,983,
+con CV a 5 pliegues 0,962 ± 0,011 y una brecha train-test de 0,018. Y sobre
+historiales derivados de **coches reales** (`real_benchmark.py`) alcanza un
+**ROC-AUC de 0,980** en test (0,975 ± 0,004 en CV), con la brecha en 0,009, la
+regla de rollback con recall 1,000 y un control de etiquetas barajadas que
+desploma el AUC a ≈0,50. Todas son cifras que imprimen `evaluation.py` y
+`real_benchmark.py`.
+
+**¿De dónde sacas datos de fraude real para entrenar?**
+No existe un conjunto público de *historiales* de rollback reales etiquetados —el
+fraude, por definición, no viene etiquetado—. Uso la metodología estándar cuando
+el fraude etiquetado escasea: **población legítima real + fraude inyectado**. La
+clase legítima se construye con coches reales (`imbalet/used_cars`, 432.227
+anuncios): su `year`, `mileage` y `owners` reales fijan un historial plausible y
+creciente, así que las distribuciones de características (km, edad, km/año,
+propietarios) son reales. La clase de fraude inyecta un rollback (una lectura
+posterior por debajo de una anterior) o un salto imposible en coches reales
+**distintos**. Lo digo con total transparencia en el README y en la guía 06: es la
+forma estándar y defendible de validar cuando no hay fraude real etiquetado.
+
+**¿Y cómo evitas el *data leakage* en ese benchmark real?**
+Por construcción: los coches de la clase legítima y los de la clase de fraude son
+**disjuntos** (ningún vehículo aparece en ambas), cada historial procede de un
+anuncio real distinto (no hay plantillas reutilizadas), y la separación
+train/test y la validación cruzada son sobre historiales completos. La prueba
+decisiva es el **control de etiquetas barajadas**: al permutar las etiquetas y
+reentrenar, el AUC cae a ≈0,50; si hubiera fuga, no caería.
 
 **¿Cómo das explicabilidad?**
 Con dos cosas. Las `red_flags` en texto son la explicación **local y determinista**
 (qué pasó y cuándo: "el odómetro bajó de 61.000 a 35.000 km"). Y cuando marca el
 modelo sin una regla dura, `model_factors` da una explicación **específica de ese
 vehículo**: no el ranking global de importancias (idéntico para todos), sino las
-características de *este* historial que más se desvían de un coche honesto, como
+características de *este* historial que más se desvían de un coche legítimo, como
 z-scores con signo ponderados por importancia. El modelo también expone
 `feature_importances_` si se quiere la vista global. El informe trae ambas cosas,
 así que ningún veredicto es una caja negra.
@@ -80,10 +104,12 @@ los que se evalúa.
 
 ## Pregunta trampa
 
-**¿Qué cambiarías para producción?**
-Cuatro cosas: (1) descentralizar el conjunto de registradores (inspectores
-acreditados) en vez de un operador único; (2) una gestión seria de las claves de
-los registradores; (3) una auditoría formal del contrato; y (4) un detector más
+**¿Qué añadirías para un despliegue a gran escala?**
+Hoy el proyecto ya valida el detector contra estadísticas reales de coches y
+garantiza los rollbacks con reglas deterministas; para escalarlo añadiría cuatro
+cosas: (1) descentralizar el conjunto de registradores (inspectores acreditados)
+en vez de un operador único; (2) una gestión seria de las claves de los
+registradores; (3) una auditoría formal del contrato; y (4) un detector aún más
 rico que cruce el historial con planes de mantenimiento del fabricante y el estado
-del título, midiendo siempre contra la línea base actual. Y dejaría claro que es
-una implementación de referencia, no un servicio certificado.
+del título, midiendo siempre contra la línea base actual. Cada pieza encaja tras
+la misma interfaz `assess`, así que son extensiones, no reescrituras.

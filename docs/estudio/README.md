@@ -18,7 +18,12 @@ explica el "por qué" de cada decisión en tu idioma, para estudiar con calma.
    kilometraje usa solo lecturas fiables.
 4. **[04-arquitectura-y-diseno.md](04-arquitectura-y-diseno.md)** — cómo encajan
    las piezas y qué decisiones de diseño se tomaron.
-5. **[05-preguntas-de-entrevista.md](05-preguntas-de-entrevista.md)** — preguntas
+5. **[06-benchmark-datos-reales.md](06-benchmark-datos-reales.md)** — cómo se
+   valida el detector contra estadísticas de coches **reales**: la metodología
+   (distribuciones reales + fraude inyectado), las métricas (ROC-AUC, F1), el
+   sobre/infra-ajuste y la brecha, un ejemplo trabajado con las cifras reales y el
+   control de etiquetas barajadas.
+6. **[05-preguntas-de-entrevista.md](05-preguntas-de-entrevista.md)** — preguntas
    típicas y cómo responderlas con seguridad.
 
 ## Resumen en una frase
@@ -27,4 +32,6 @@ VehiclePassport registra el historial de un vehículo (servicios, inspecciones,
 cambios de propietario, lecturas de cuentakilómetros) en un libro mayor en cadena
 que nadie puede reescribir, y usa un detector de IA explicable para marcar
 fraudes como la manipulación del cuentakilómetros (rollback) y los historiales
-inconsistentes — sin poner el VIN ni datos personales en la cadena.
+inconsistentes — sin poner el VIN ni datos personales en la cadena. El detector
+está validado contra estadísticas de coches reales (ROC-AUC 0,980, ver la guía
+06), no solo contra datos sintéticos.

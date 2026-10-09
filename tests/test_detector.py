@@ -29,7 +29,7 @@ def test_unfitted_detector_raises():
         TamperDetector().assess([])
 
 
-def test_honest_vehicle_is_clean(detector):
+def test_legit_vehicle_is_clean(detector):
     history = [
         _ev(EventType.OWNERSHIP_TRANSFER, 0, 0),
         _ev(EventType.SERVICE, 15_000, 365),

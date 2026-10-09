@@ -1,6 +1,6 @@
-"""Synthetic vehicle lifecycle histories, honest and tampered.
+"""Synthetic vehicle lifecycle histories, legitimate and tampered.
 
-An honest vehicle has a monotonically rising odometer at a plausible rate and
+A legitimate vehicle has a monotonically rising odometer at a plausible rate and
 regular servicing. A tampered vehicle carries one of two classic frauds: an
 *odometer rollback* (the reading drops before a sale) or an *implausible jump*
 (a large distance appears over a few days, the signature of a cloned or swapped
@@ -32,10 +32,10 @@ def make_history(rng: np.random.Generator, tampered: bool) -> tuple[list[EventRe
     age_days = int(rng.uniform(3 * 365, 12 * 365))
     start_ts = NOW - age_days * DAY
     # About a quarter of vehicles are high-mileage commercial use (a taxi, a
-    # delivery van). An honest one of these still has a monotonically rising
+    # delivery van). A legitimate one of these still has a monotonically rising
     # odometer — just a much steeper slope. Including them in training stops the
     # model from equating "high mileage" with fraud: high *monotonic* mileage is
-    # honest, a *rollback* or an impossible *jump* is not.
+    # legitimate, a *rollback* or an impossible *jump* is not.
     if rng.random() < 0.25:
         daily_km = float(rng.uniform(70.0, 230.0))  # ~26k..84k km/year (commercial)
     else:
@@ -44,9 +44,9 @@ def make_history(rng: np.random.Generator, tampered: bool) -> tuple[list[EventRe
     n_events = int(rng.integers(9, 20))
     day_offsets = np.sort(rng.choice(np.arange(10, age_days), size=n_events, replace=False))
     odo = np.array([max(0, d * daily_km + rng.normal(0, 150)) for d in day_offsets])
-    odo = np.maximum.accumulate(odo)  # honest: never decreases
+    odo = np.maximum.accumulate(odo)  # legitimate: never decreases
 
-    kind = "honest"
+    kind = "legit"
     if tampered:
         kind = str(rng.choice(["rollback", "jump"]))
         j = int(rng.integers(n_events // 3, n_events - 1))

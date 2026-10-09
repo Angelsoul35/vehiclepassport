@@ -9,7 +9,8 @@ data flows through them, and the boundaries between them.
 | Layer          | Module                             | Responsibility                                            |
 | -------------- | ---------------------------------- | --------------------------------------------------------- |
 | Vocabulary     | `vehiclepassport/events.py`        | Event types, mirrored from the Solidity enum              |
-| Data           | `vehiclepassport/generate.py`      | Synthetic honest and tampered histories, labelled         |
+| Data           | `vehiclepassport/generate.py`      | Synthetic legitimate and tampered histories, labelled     |
+| Real benchmark | `vehiclepassport/real_data.py` + `real_benchmark.py` | Real used-car distributions + injected fraud, scored |
 | Features       | `vehiclepassport/features.py`      | History → feature vector + deterministic red flags        |
 | Detector       | `vehiclepassport/detector.py`      | Risk score (RandomForest) + hard-flag override            |
 | Orchestration  | `vehiclepassport/service.py`       | Record events and assess a vehicle end to end             |
@@ -65,9 +66,25 @@ rules guarantee the obvious ones are never missed.
 
 When the model flags a vehicle with no hard red flag, the report explains *that
 vehicle*: `model_factors` is a per-instance explanation — the features where this
-history deviates most from an honest car, as a signed z-score weighted by the
+history deviates most from a legitimate car, as a signed z-score weighted by the
 model's importances — rather than a global feature ranking that would read the
 same for every vehicle. So even a model-only verdict is inspectable.
+
+## Validation
+
+The detector is validated two ways, and both prove the score rather than assert
+it. `vehiclepassport.evaluation` runs a leakage-free, seed-controlled check on
+synthetic histories (stratified 5-fold cross-validation, an independent-seed test
+set, and the train/test gap). `vehiclepassport.real_benchmark` goes further: it
+builds histories whose feature distributions (mileage, age, km/year, owners) are
+drawn from 432,227 **real** used-car listings (`imbalet/used_cars`), injects
+odometer rollbacks and implausible jumps into a *disjoint* set of real cars, and
+scores the project's own detector with ROC-AUC, F1 and accuracy under
+cross-validation and a held-out split. It also reports a majority-class baseline,
+the deterministic rollback rule's recall, and a shuffled-label control that
+collapses AUC to chance — the direct evidence that the learned signal is real and
+leakage-free. See the README for the numbers and `datasets/README.md` for the
+real-distributions + injected-fraud methodology.
 
 ## The registry boundary
 

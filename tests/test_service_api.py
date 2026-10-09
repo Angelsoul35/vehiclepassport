@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from vehiclepassport.events import EventType
 from vehiclepassport.generate import DAY, NOW
 
-HONEST = [
+LEGIT = [
     (EventType.OWNERSHIP_TRANSFER, 0, 1800),
     (EventType.SERVICE, 15_000, 1400),
     (EventType.SERVICE, 32_000, 1000),
@@ -24,8 +24,8 @@ def _record(service, vin, rows):
         service.record_event(vin, etype, odo, NOW - days * DAY)
 
 
-def test_service_assess_honest_and_rollback(service):
-    _record(service, "VIN-OK", HONEST)
+def test_service_assess_legit_and_rollback(service):
+    _record(service, "VIN-OK", LEGIT)
     _record(service, "VIN-BAD", ROLLBACK)
 
     ok = service.assess("VIN-OK")
@@ -38,9 +38,9 @@ def test_service_assess_honest_and_rollback(service):
 
 
 def test_history_round_trips(service):
-    _record(service, "VIN-H", HONEST)
+    _record(service, "VIN-H", LEGIT)
     history = service.history_as_dicts("VIN-H")
-    assert len(history) == len(HONEST)
+    assert len(history) == len(LEGIT)
     assert history[0]["event_type"] == "ownership_transfer"
     assert history[0]["data_hash"].startswith("0x")
 
